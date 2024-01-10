@@ -1,11 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0</TargetFrameworks> <!--netstandard2.0;-->
+    <TargetFrameworks>net7.0;netstandard2.0;</TargetFrameworks> <!---->
 	<AssemblyName>Svrooij.PowerShell.DependencyInjection</AssemblyName>
 	<LangVersion>10.0</LangVersion>
+	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	<Authors>Stephan van Rooij</Authors>
+	<Copyright>Copyright (c) 2024 Stephan van Rooij</Copyright>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<PackageId>Svrooij.PowerShell.DependencyInjection</PackageId>
+	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+	<PackageProjectUrl>https://github.com/svrooij/PowerShell.DependencyInjection/</PackageProjectUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	<PackageTags>PowerShell;Dependency Injection;async</PackageTags>
+	<RepositoryType>git</RepositoryType>
+	<RepositoryUrl>https://github.com/svrooij/PowerShell.DependencyInjection.git</RepositoryUrl>
+	<Title>PowerShell Dependency Injection by @svrooij</Title>
   </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\LICENSE.txt" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="\README.md" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
@@ -13,8 +30,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" />
+	<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
+	<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.6" />
