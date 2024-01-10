@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Svrooij.PowerShell.DependencyInjection", "src\Svrooij.PowerShell.DependencyInjection\Svrooij.PowerShell.DependencyInjection.csproj", "{EC06A32A-2876-41A0-B9CD-C0DC48C026D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Svrooij.PowerShell.DependencyInjection.Sample", "sample\Svrooij.PowerShell.DependencyInjection.Sample.csproj", "{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC06A32A-2876-41A0-B9CD-C0DC48C026D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC06A32A-2876-41A0-B9CD-C0DC48C026D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC06A32A-2876-41A0-B9CD-C0DC48C026D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC06A32A-2876-41A0-B9CD-C0DC48C026D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {207BD340-4D46-44B6-ADEA-C8AD65AB32C3}
+	EndGlobalSection
+EndGlobal
