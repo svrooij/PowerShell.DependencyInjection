@@ -10,11 +10,42 @@ I choose to only support a Task, I guess that all code that you're executing usi
 
 ## Create a new PowerShell module
 
-<!-- TODO: Needs sample -->
+```shell
+# Install the correct template (only once)
+dotnet new install Microsoft.PowerShell.Standard.Module.Template
+
+# Create a new directory and enter it
+mkdir MyNewModule
+cd MyNewModule
+
+# Create a new PowerShell module
+dotnet new psmodule
+```
 
 ## Add Package
 
 Add the pacakge `dotnet add package Svrooij.PowerShell.DependencyInjection`
+
+## Edit project file
+
+Add the `CopyLocalLockFileAssemblies` to your project file, this will make sure that the dependencies are copied to the output folder.
+
+```xml
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Svrooij.PowerShell.DependencyInjection.SamplePs5</AssemblyName>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+```
+
+And change the version of `PowerShellStandard.Library` to `5.1.1`.
+
+```xml
+  <ItemGroup>
+	<PackageReference Include="PowerShellStandard.Library" Version="5.1.1" />
+	<PackageReference Include="Svrooij.PowerShell.DependencyInjection" Version="1.0.1" />
+  </ItemGroup>
+```
 
 ## Create a Startup class
 
@@ -35,13 +66,13 @@ public class Startup : PsStartup
 ## Create a CmdLet
 
 1. Instead of inheriting from `PsCmdLet`, you need to inherit `DependencyCmdlet<YourStartupClass>`.
-2. And then you put the `[ServiceDependency]` attribute above every private or internal, property or field you want loaded from dependency injection.
-3. Override the `Task ProcessRecordAsync(CancellationToken cancellationToken)` and call all the async stuff you want.
+2. And then you put the `[ServiceDependency]` attribute above every private (or internal), field or property you want loaded from dependency injection.
+3. Override the `Task ProcessRecordAsync(CancellationToken cancellationToken)` method and call all the async stuff you want.
 
 ```csharp
     [Cmdlet(VerbsDiagnostic.Test, "SampleCmdlet")]
     [OutputType(typeof(FavoriteStuff))]
-    public class TestSampleCmdletCommand : DependencyCmdlet<Startup>
+    public class TestSampleCmdletCommand : DependencyCmdlet<YourStartupClass>
     {
         [Parameter(
             Mandatory = true,

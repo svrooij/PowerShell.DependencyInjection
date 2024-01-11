@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Svrooij.PowerShell.DependencyInjection", ".\src\Svrooij.PowerShell.DependencyInjection\Svrooij.PowerShell.DependencyInjection.csproj", "{EC06A32A-2876-41A0-B9CD-C0DC48C026D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Svrooij.PowerShell.DependencyInjection", "src\Svrooij.PowerShell.DependencyInjection\Svrooij.PowerShell.DependencyInjection.csproj", "{EC06A32A-2876-41A0-B9CD-C0DC48C026D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Svrooij.PowerShell.DependencyInjection.Sample", ".\sample\Svrooij.PowerShell.DependencyInjection.Sample.csproj", "{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Svrooij.PowerShell.DependencyInjection.Sample", "sample\net7-sample\Svrooij.PowerShell.DependencyInjection.Sample.csproj", "{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{989ECFF3-6FEA-4163-9658-92C93377CEFB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{5CDFBAB6-7C11-4521-A5D8-512EB408702F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Svrooij.PowerShell.DependencyInjection.SamplePs5", "sample\netstandard-sample\Svrooij.PowerShell.DependencyInjection.SamplePs5.csproj", "{AF38E5AE-C08E-43C7-88C6-3D8C28E970E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +27,18 @@ Global
 		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF38E5AE-C08E-43C7-88C6-3D8C28E970E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF38E5AE-C08E-43C7-88C6-3D8C28E970E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF38E5AE-C08E-43C7-88C6-3D8C28E970E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF38E5AE-C08E-43C7-88C6-3D8C28E970E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EC06A32A-2876-41A0-B9CD-C0DC48C026D2} = {989ECFF3-6FEA-4163-9658-92C93377CEFB}
+		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8} = {5CDFBAB6-7C11-4521-A5D8-512EB408702F}
+		{AF38E5AE-C08E-43C7-88C6-3D8C28E970E4} = {5CDFBAB6-7C11-4521-A5D8-512EB408702F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {207BD340-4D46-44B6-ADEA-C8AD65AB32C3}

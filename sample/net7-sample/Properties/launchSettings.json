@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Svrooij.PowerShell.DependencyInjection.Sample": {
+    "Start in PowerShell Core": {
       "executablePath": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
       "commandName": "Executable",
       "commandLineArgs": "-noexit -command &{ Import-Module .\\\\Svrooij.PowerShell.DependencyInjection.Sample.dll -Verbose}"
