@@ -50,12 +50,12 @@ public sealed class ThreadAffinitiveSynchronizationContext : SynchronizationCont
 
     #region Construction / disposal
 
-    /// <summary>
-    ///	Create a new thread-affinitive synchronization context.
-    /// </summary>
-    public ThreadAffinitiveSynchronizationContext()
-    {
-    }
+    // /// <summary>
+    // ///	Create a new thread-affinitive synchronization context.
+    // /// </summary>
+    // public ThreadAffinitiveSynchronizationContext()
+    // {
+    // }
 
     /// <summary>
     ///	Dispose of resources being used by the synchronization context.
@@ -85,12 +85,11 @@ public sealed class ThreadAffinitiveSynchronizationContext : SynchronizationCont
     /// <summary>
     ///	Run the message pump for the callback queue on the current thread.
     /// </summary>
-    public void RunMessagePump()
+    private void RunMessagePump()
     {
         CheckDisposed();
 
-        KeyValuePair<SendOrPostCallback, object> workItem;
-        while (_workItemQueue.TryTake(out workItem, Timeout.InfiniteTimeSpan))
+        while (_workItemQueue.TryTake(out var workItem, Timeout.InfiniteTimeSpan))
         {
             workItem.Key(workItem.Value);
 
@@ -103,7 +102,7 @@ public sealed class ThreadAffinitiveSynchronizationContext : SynchronizationCont
     /// <summary>
     ///	Terminate the message pump once all callbacks have completed.
     /// </summary>
-    public void TerminateMessagePump()
+    private void TerminateMessagePump()
     {
         CheckDisposed();
 
@@ -129,25 +128,21 @@ public sealed class ThreadAffinitiveSynchronizationContext : SynchronizationCont
     public override void Post(SendOrPostCallback callback, object callbackState)
     {
         if (callback == null)
-            throw new ArgumentNullException("callback");
+            throw new ArgumentNullException(nameof(callback));
 
         CheckDisposed();
 
-        try
-        {
-            _workItemQueue.Add(
-                new KeyValuePair<SendOrPostCallback, object>(
-                    key: callback,
-                    value: callbackState
-                    )
-                );
-        }
-        catch (InvalidOperationException eMessagePumpAlreadyTerminated)
+        var added = _workItemQueue.TryAdd(new KeyValuePair<SendOrPostCallback, object>(
+                key: callback,
+                value: callbackState
+            )
+        );
+        
+        if (!added)
         {
             throw new InvalidOperationException(
-                "Cannot enqueue the specified callback because the synchronization context's message pump has already been terminated.",
-                eMessagePumpAlreadyTerminated
-                );
+                "Cannot enqueue the specified callback because the synchronization context's message pump has already been terminated."
+            );
         }
     }
 
@@ -164,50 +159,48 @@ public sealed class ThreadAffinitiveSynchronizationContext : SynchronizationCont
     public static void RunSynchronized(Func<Task> asyncOperation)
     {
         if (asyncOperation == null)
-            throw new ArgumentNullException("asyncOperation");
+            throw new ArgumentNullException(nameof(asyncOperation));
 
         SynchronizationContext savedContext = Current;
         try
         {
-            using (ThreadAffinitiveSynchronizationContext synchronizationContext = new ThreadAffinitiveSynchronizationContext())
+            using ThreadAffinitiveSynchronizationContext synchronizationContext = new ThreadAffinitiveSynchronizationContext();
+            SetSynchronizationContext(synchronizationContext);
+
+            Task rootOperationTask = asyncOperation();
+            if (rootOperationTask == null)
+                throw new InvalidOperationException("The asynchronous operation delegate cannot return null.");
+
+            rootOperationTask
+                .ContinueWith(
+                    operationTask =>
+                        synchronizationContext.TerminateMessagePump(),
+                    scheduler:
+                    TaskScheduler.Default
+                );
+
+            synchronizationContext.RunMessagePump();
+
+            try
             {
-                SetSynchronizationContext(synchronizationContext);
-
-                Task rootOperationTask = asyncOperation();
-                if (rootOperationTask == null)
-                    throw new InvalidOperationException("The asynchronous operation delegate cannot return null.");
-
                 rootOperationTask
-                    .ContinueWith(
-                        operationTask =>
-                            synchronizationContext.TerminateMessagePump(),
-                        scheduler:
-                            TaskScheduler.Default
-                    );
+                    .GetAwaiter()
+                    .GetResult();
+            }
+            catch (AggregateException eWaitForTask) // The TPL will almost always wrap an AggregateException around any exception thrown by the async operation.
+            {
+                // Is this just a wrapped exception?
+                AggregateException flattenedAggregate = eWaitForTask.Flatten();
+                if (flattenedAggregate.InnerExceptions.Count != 1)
+                    throw; // Nope, genuine aggregate.
 
-                synchronizationContext.RunMessagePump();
-
-                try
-                {
-                    rootOperationTask
-                        .GetAwaiter()
-                        .GetResult();
-                }
-                catch (AggregateException eWaitForTask) // The TPL will almost always wrap an AggregateException around any exception thrown by the async operation.
-                {
-                    // Is this just a wrapped exception?
-                    AggregateException flattenedAggregate = eWaitForTask.Flatten();
-                    if (flattenedAggregate.InnerExceptions.Count != 1)
-                        throw; // Nope, genuine aggregate.
-
-                    // Yep, so rethrow (preserving original stack-trace).
-                    ExceptionDispatchInfo
-                        .Capture(
-                            flattenedAggregate
-                                .InnerExceptions[0]
-                        )
-                        .Throw();
-                }
+                // Yep, so rethrow (preserving original stack-trace).
+                ExceptionDispatchInfo
+                    .Capture(
+                        flattenedAggregate
+                            .InnerExceptions[0]
+                    )
+                    .Throw();
             }
         }
         finally
@@ -231,53 +224,51 @@ public sealed class ThreadAffinitiveSynchronizationContext : SynchronizationCont
     public static TResult RunSynchronized<TResult>(Func<Task<TResult>> asyncOperation)
     {
         if (asyncOperation == null)
-            throw new ArgumentNullException("asyncOperation");
+            throw new ArgumentNullException(nameof(asyncOperation));
 
         SynchronizationContext savedContext = Current;
         try
         {
-            using (ThreadAffinitiveSynchronizationContext synchronizationContext = new ThreadAffinitiveSynchronizationContext())
+            using ThreadAffinitiveSynchronizationContext synchronizationContext = new ThreadAffinitiveSynchronizationContext();
+            SetSynchronizationContext(synchronizationContext);
+
+            Task<TResult> rootOperationTask = asyncOperation();
+            if (rootOperationTask == null)
+                throw new InvalidOperationException("The asynchronous operation delegate cannot return null.");
+
+            rootOperationTask
+                .ContinueWith(
+                    operationTask =>
+                        synchronizationContext.TerminateMessagePump(),
+                    scheduler:
+                    TaskScheduler.Default
+                );
+
+            synchronizationContext.RunMessagePump();
+
+            try
             {
-                SetSynchronizationContext(synchronizationContext);
+                return
+                    rootOperationTask
+                        .GetAwaiter()
+                        .GetResult();
+            }
+            catch (AggregateException eWaitForTask) // The TPL will almost always wrap an AggregateException around any exception thrown by the async operation.
+            {
+                // Is this just a wrapped exception?
+                AggregateException flattenedAggregate = eWaitForTask.Flatten();
+                if (flattenedAggregate.InnerExceptions.Count != 1)
+                    throw; // Nope, genuine aggregate.
 
-                Task<TResult> rootOperationTask = asyncOperation();
-                if (rootOperationTask == null)
-                    throw new InvalidOperationException("The asynchronous operation delegate cannot return null.");
+                // Yep, so rethrow (preserving original stack-trace).
+                ExceptionDispatchInfo
+                    .Capture(
+                        flattenedAggregate
+                            .InnerExceptions[0]
+                    )
+                    .Throw();
 
-                rootOperationTask
-                    .ContinueWith(
-                        operationTask =>
-                            synchronizationContext.TerminateMessagePump(),
-                        scheduler:
-                            TaskScheduler.Default
-                    );
-
-                synchronizationContext.RunMessagePump();
-
-                try
-                {
-                    return
-                        rootOperationTask
-                            .GetAwaiter()
-                            .GetResult();
-                }
-                catch (AggregateException eWaitForTask) // The TPL will almost always wrap an AggregateException around any exception thrown by the async operation.
-                {
-                    // Is this just a wrapped exception?
-                    AggregateException flattenedAggregate = eWaitForTask.Flatten();
-                    if (flattenedAggregate.InnerExceptions.Count != 1)
-                        throw; // Nope, genuine aggregate.
-
-                    // Yep, so rethrow (preserving original stack-trace).
-                    ExceptionDispatchInfo
-                        .Capture(
-                            flattenedAggregate
-                                .InnerExceptions[0]
-                        )
-                        .Throw();
-
-                    throw; // Never reached.
-                }
+                throw; // Never reached.
             }
         }
         finally

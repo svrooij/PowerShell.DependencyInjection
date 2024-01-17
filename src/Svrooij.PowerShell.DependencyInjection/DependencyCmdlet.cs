@@ -14,19 +14,19 @@ namespace Svrooij.PowerShell.DependencyInjection;
 /// <remarks>You should override <see cref="DependencyCmdlet{T}.ProcessRecordAsync(CancellationToken)"/>. A lot of other methods are blocked from overriding.</remarks>
 public abstract class DependencyCmdlet<T> : PSCmdlet where T : PsStartup, new()
 {
-    private readonly IServiceProvider serviceProvider;
-    private readonly CancellationTokenSource cancellationTokenSource = new();
+    private readonly IServiceProvider _serviceProvider;
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     /// <summary>
     /// <see cref="DependencyCmdlet{T}"/> constructor, called by PowerShell.
     /// </summary>
-    public DependencyCmdlet()
+    protected DependencyCmdlet()
     {
         var startup = new T();
         var services = new ServiceCollection();
         startup.ConfigurePowerShellServices(services, this);
         startup.ConfigureServices(services);
-        serviceProvider = services.BuildServiceProvider();
+        _serviceProvider = services.BuildServiceProvider();
     }
 
     /// <summary>
@@ -35,26 +35,38 @@ public abstract class DependencyCmdlet<T> : PSCmdlet where T : PsStartup, new()
     /// <param name="cancellationToken">The cancellation token will be called when the user presses CTRL+C during execution</param>
     /// <remarks>Your overridden method will be called automatically!</remarks>
     /// <exception cref="NotImplementedException">When not overridden</exception>
+    /// <exception cref="InvalidOperationException">When one or more dependencies marked as required are not found</exception>
     public virtual Task ProcessRecordAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"You'll need to override {nameof(ProcessRecordAsync)}()");
+    }
+    
+    /// <summary>
+    /// Override this property to bind dependencies manually, the service provider is provided by the base library.
+    /// </summary>
+    protected virtual Action<DependencyCmdlet<T>, IServiceProvider> BindDependencies {
+        get
+        {
+            return (obj, serviceProvider) => serviceProvider.BindDependencies(obj);
+        }
     }
 
     /// <summary>
     /// You can call ProcessRecord, but you cannot override it!
     /// </summary>
-    protected override sealed void ProcessRecord()
+    /// <remarks>Override the <see cref="ProcessRecordAsync"/> method, which is called automatically.</remarks>
+    protected sealed override void ProcessRecord()
     {
-        ThreadAffinitiveSynchronizationContext.RunSynchronized(() => ProcessRecordAsync(cancellationTokenSource.Token));
+        ThreadAffinitiveSynchronizationContext.RunSynchronized(() => ProcessRecordAsync(_cancellationTokenSource.Token));
     }
 
     /// <summary>
     /// You can call BeginProcessing, but you cannot override it!
     /// </summary>
     /// <remarks>This is called by PowerShell automatically. And is used to bind dependencies.</remarks>
-    protected override sealed void BeginProcessing()
+    protected sealed override void BeginProcessing()
     {
-        serviceProvider.BindDepencencies(this);
+        BindDependencies(this, _serviceProvider);
         base.BeginProcessing();
     }
 
@@ -62,9 +74,9 @@ public abstract class DependencyCmdlet<T> : PSCmdlet where T : PsStartup, new()
     /// You can call StopProcessing, but you cannot override it!
     /// </summary>
     /// <remarks>This is called by PowerShell if the user cancels the request. If is used to trigger the cancellationToken on <see cref="ProcessRecordAsync(CancellationToken)"/>.</remarks>
-    protected override sealed void StopProcessing()
+    protected sealed override void StopProcessing()
     {
-        cancellationTokenSource.Cancel();
+        _cancellationTokenSource.Cancel();
         base.StopProcessing();
     }
 
@@ -72,7 +84,7 @@ public abstract class DependencyCmdlet<T> : PSCmdlet where T : PsStartup, new()
     /// You can call EndProcessing, but you cannot override it!
     /// </summary>
     /// <remarks>This is called by PowerShell automatically.</remarks>
-    protected override sealed void EndProcessing()
+    protected sealed override void EndProcessing()
     {
         base.EndProcessing();
     }

@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Svrooij.PowerShell.DependencyInjection.Logging;
 using System.Management.Automation;
+using Microsoft.Extensions.Logging;
 
 namespace Svrooij.PowerShell.DependencyInjection;
 
@@ -16,7 +18,13 @@ public abstract class PsStartup
 {
     internal void ConfigurePowerShellServices(IServiceCollection services, PSCmdlet cmdlet)
     {
-        services.AddPowerShellLogging(cmdlet);
+        // services.AddPowerShellLogging(cmdlet, builder =>
+        // {
+        //     builder.DefaultLevel = LogLevel.Information;
+        //     builder.LogLevel["Svrooij.PowerShell.DependencyInjection.Sample"] = LogLevel.Debug;
+        // });
+
+        services.AddPowerShellLogging(cmdlet, ConfigurePowerShellLogging());
     }
 
     /// <summary>
@@ -26,5 +34,21 @@ public abstract class PsStartup
     /// <remarks>Logging is setup for you, overriding it breaks stuff!</remarks>
     public virtual void ConfigureServices(IServiceCollection services)
     {
+    }
+    
+#nullable enable
+    /// <summary>
+    /// Override this method to configure the <see cref="PowerShellLoggerConfiguration"/> needed by your application.
+    /// </summary>
+    /// <code>
+    /// return builder =>
+    /// {
+    ///    builder.MinimumLevel = LogLevel.Information;
+    /// };
+    /// </code>
+    public virtual Action<PowerShellLoggerConfiguration>? ConfigurePowerShellLogging()
+    {
+        // Default implementation, you can override this method to change the default behavior.
+        return null;
     }
 }

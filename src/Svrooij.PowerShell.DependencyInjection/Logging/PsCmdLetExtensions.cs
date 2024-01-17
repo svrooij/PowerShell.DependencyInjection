@@ -13,11 +13,10 @@ internal static class PsCmdletExtensions
     /// </summary>
     /// <param name="cmdlet"><see cref="PSCmdlet"/> that is used for the log message</param>
     /// <param name="logLevel"><see cref="LogLevel"/> for the message, will be put in from the message</param>
-    /// <param name="category">The log category</param>
     /// <param name="eventId">The ID for this specific event</param>
     /// <param name="message">Log message</param>
     /// <param name="e">(optional) <see cref="Exception"/></param>
-    public static void WriteLog(this PSCmdlet cmdlet, LogLevel logLevel, string category, int eventId, string message, Exception? e = null)
+    public static void WriteLog(this PSCmdlet cmdlet, LogLevel logLevel, int eventId, string message, Exception? e = null)
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     {
         switch (logLevel)
