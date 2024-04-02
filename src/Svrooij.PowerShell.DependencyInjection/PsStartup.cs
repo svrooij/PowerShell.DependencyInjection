@@ -35,7 +35,7 @@ public abstract class PsStartup
     public virtual void ConfigureServices(IServiceCollection services)
     {
     }
-    
+
 #nullable enable
     /// <summary>
     /// Override this method to configure the <see cref="PowerShellLoggerConfiguration"/> needed by your application.

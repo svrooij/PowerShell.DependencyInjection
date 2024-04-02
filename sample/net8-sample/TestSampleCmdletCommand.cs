@@ -39,10 +39,10 @@ namespace Svrooij.PowerShell.DependencyInjection.Sample
         public override async Task ProcessRecordAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting ProcessRecordAsync()");
-            
+
             // In the startup class we configured the logging level for this namespace to Debug
             _logger.LogDebug("FavoriteNumber: {FavoriteNumber}, FavoritePet: {favoritePet}", FavoriteNumber, FavoritePet);
-            
+
             _logger.LogWarning("This is a warning");
             _logger.LogError("This is an error");
 
@@ -54,7 +54,7 @@ namespace Svrooij.PowerShell.DependencyInjection.Sample
                 FavoritePet = this.FavoritePet
             });
         }
-        
+
         // protected override Action<DependencyCmdlet<Startup>, IServiceProvider> BindDependencies { get; } = (obj, serviceProvider) =>
         // {
         //     if (obj is TestSampleCmdletCommand cmdlet)

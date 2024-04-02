@@ -34,7 +34,7 @@ Add the `CopyLocalLockFileAssemblies` to your project file, this will make sure 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Svrooij.PowerShell.DependencyInjection.SamplePs5</AssemblyName>
-	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 ```
 
@@ -42,8 +42,8 @@ And change the version of `PowerShellStandard.Library` to `5.1.1`.
 
 ```xml
   <ItemGroup>
-	<PackageReference Include="PowerShellStandard.Library" Version="5.1.1" />
-	<PackageReference Include="Svrooij.PowerShell.DependencyInjection" Version="1.0.1" />
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" />
+    <PackageReference Include="Svrooij.PowerShell.DependencyInjection" Version="1.0.1" />
   </ItemGroup>
 ```
 

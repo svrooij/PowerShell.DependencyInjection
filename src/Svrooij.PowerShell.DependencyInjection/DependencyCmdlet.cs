@@ -40,11 +40,12 @@ public abstract class DependencyCmdlet<T> : PSCmdlet where T : PsStartup, new()
     {
         throw new NotImplementedException($"You'll need to override {nameof(ProcessRecordAsync)}()");
     }
-    
+
     /// <summary>
     /// Override this property to bind dependencies manually, the service provider is provided by the base library.
     /// </summary>
-    protected virtual Action<DependencyCmdlet<T>, IServiceProvider> BindDependencies {
+    protected virtual Action<DependencyCmdlet<T>, IServiceProvider> BindDependencies
+    {
         get
         {
             return (obj, serviceProvider) => serviceProvider.BindDependencies(obj);

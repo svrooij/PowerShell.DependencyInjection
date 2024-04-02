@@ -3,7 +3,7 @@
     RootModule = 'Svrooij.PowerShell.DependencyInjection.Sample.dll'
 
     # Version number of this module.
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.2.0'
 
     # ID used to uniquely identify this module.
     GUID = '565d2077-b91f-4b27-81c4-e2ae049ec958'
@@ -20,7 +20,7 @@
     Description = 'A sample module that shows of the dependency injection in PowerShell'
 
     # Minimum version of the Windows PowerShell engine required by this module.
-    PowerShellVersion = '5.1'
+    PowerShellVersion = '7.4.0'
 
     # Minimum version of the .NET Framework required by this module.
     # DotNetFrameworkVersion = '4.7.2'

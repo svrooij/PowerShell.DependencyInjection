@@ -24,7 +24,7 @@ internal static class ServiceProviderExtensions
         {
             throw new ArgumentNullException(nameof(obj));
         }
-        
+
         serviceProvider.BindPropertyDependencies(obj);
         serviceProvider.BindFieldDependencies(obj);
     }
@@ -39,13 +39,15 @@ internal static class ServiceProviderExtensions
         {
             var serviceDependencyAttribute = (ServiceDependencyAttribute)property.GetCustomAttributes(attrType, true)[0];
             var service = serviceProvider.GetService(property.PropertyType);
-            if (service is not null) {
+            if (service is not null)
+            {
                 property.SetValue(obj, service);
-            } else if (serviceDependencyAttribute.Required) 
+            }
+            else if (serviceDependencyAttribute.Required)
             {
                 throw new InvalidOperationException($"Could not find service for {property.PropertyType.Name}.");
             }
-                
+
         }
     }
 
@@ -59,9 +61,11 @@ internal static class ServiceProviderExtensions
         {
             var serviceDependencyAttribute = (ServiceDependencyAttribute)field.GetCustomAttributes(attrType, true)[0];
             var service = serviceProvider.GetService(field.FieldType);
-            if (service is not null) {
+            if (service is not null)
+            {
                 field.SetValue(obj, service);
-            } else if (serviceDependencyAttribute.Required) 
+            }
+            else if (serviceDependencyAttribute.Required)
             {
                 throw new InvalidOperationException($"Could not find service for {field.FieldType.Name}.");
             }
