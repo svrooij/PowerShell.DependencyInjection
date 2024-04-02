@@ -17,7 +17,6 @@
 	<RepositoryType>git</RepositoryType>
 	<RepositoryUrl>https://github.com/svrooij/PowerShell.DependencyInjection.git</RepositoryUrl>
 	<Title>PowerShell Dependency Injection by @svrooij</Title>
-	<Version>1.0.2</Version>
   </PropertyGroup>
 
 	<ItemGroup>
