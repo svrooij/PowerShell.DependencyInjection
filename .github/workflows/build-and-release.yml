@@ -46,7 +46,6 @@ jobs:
         run: dotnet pack ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj --configuration Release --no-build -p:Version=$("${{ github.ref_name }}".Substring(1))
 
       - name: ✈️ Publish package
-        shell: pwsh
         run: dotnet nuget push ./src/Svrooij.PowerShell.DependencyInjection/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_TOKEN }}
