@@ -57,11 +57,7 @@ jobs:
           files: |
             ./src/Svrooij.PowerShell.DependencyInjection/bin/Release/*.nupkg
           tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
           body: |
-            ## Release ${{ github.ref_name }}
-            
-            This is the release for ${{ github.ref_name }}.
-
+            This package is available on NuGet: https://www.nuget.org/packages/Svrooij.PowerShell.DependencyInjection/
           generate_release_notes: true
           append_body: true
