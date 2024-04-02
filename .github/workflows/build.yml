@@ -1,0 +1,36 @@
+name: Automated build and release
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 👨‍💻 Check-out code
+        uses: actions/checkout@v4
+
+      - name: 👨‍🔧 Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: 🔍 Enable problem matchers
+        run: echo "::add-matcher::.github/matchers/dotnet.json"
+
+      - name: 🦸‍♂️ Restore steriods # this is the caching step, remove if you don't think you need it
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-nuget-${{ hashFiles('src/**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget            
+
+      - name: 🎒 Load packages
+        run: dotnet restore ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj
+
+      - name: 🛠️ Build code
+        run: dotnet build ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj --configuration Release --no-restore
