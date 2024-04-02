@@ -13,7 +13,7 @@ public class ServiceProviderExtensionsTests
             services.AddTransient<TestService>();
         return services.BuildServiceProvider();
     }
-    
+
     [Fact]
     public void ServiceDependencyProperty_ShouldBeResolved_WhenServiceWasRegistered()
     {
@@ -27,7 +27,7 @@ public class ServiceProviderExtensionsTests
         // Assert
         testClass.TestService.Should().NotBeNull();
     }
-    
+
     [Fact]
     public void NonRequiredServiceDependencyProperty_ShouldNotThrowException_WhenServiceNotRegistered()
     {
@@ -42,7 +42,7 @@ public class ServiceProviderExtensionsTests
         act.Should().NotThrow();
         testClass.TestService.Should().BeNull();
     }
-    
+
     [Fact]
     public void RequiredServiceDependencyProperty_ShouldThrowException_WhenServiceNotRegistered()
     {
@@ -70,7 +70,7 @@ public class ServiceProviderExtensionsTests
         // Assert
         testClass.TestService.Should().NotBeNull();
     }
-    
+
     [Fact]
     public void RequiredServiceDependencyField_ShouldNotThrowException_WhenServiceNotRegistered()
     {
@@ -85,7 +85,7 @@ public class ServiceProviderExtensionsTests
         act.Should().NotThrow();
         testClass.TestService.Should().BeNull();
     }
-    
+
     [Fact]
     public void RequiredServiceDependencyField_ShouldThrowException_WhenServiceNotRegistered()
     {

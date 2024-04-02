@@ -137,7 +137,7 @@ public sealed class ThreadAffinitiveSynchronizationContext : SynchronizationCont
                 value: callbackState
             )
         );
-        
+
         if (!added)
         {
             throw new InvalidOperationException(

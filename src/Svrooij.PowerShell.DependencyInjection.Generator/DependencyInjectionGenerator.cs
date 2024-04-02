@@ -20,10 +20,10 @@ namespace Svrooij.PowerShell.DependencyInjection.Generator
             var receiver = context.SyntaxReceiver as DependencyInjectionReceiver;
             if (receiver == null)
                 return;
-            
+
             if (receiver.CandidateClasses.Count == 0)
                 return;
-            
+
             foreach (var classDeclaration in receiver.CandidateClasses)
             {
                 var classSource = GenerateClassSource(classDeclaration);

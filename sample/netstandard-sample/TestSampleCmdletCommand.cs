@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Svrooij.PowerShell.DependencyInjection.SamplePs5
 {
-    [Cmdlet(VerbsDiagnostic.Test,"SampleCmdlet")]
+    [Cmdlet(VerbsDiagnostic.Test, "SampleCmdlet")]
     [OutputType(typeof(FavoriteStuff))]
     public class TestSampleCmdletCommand : DependencyCmdlet<Startup>
     {

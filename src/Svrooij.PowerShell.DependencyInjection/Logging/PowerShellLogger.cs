@@ -31,7 +31,7 @@ public class PowerShellLogger : ILogger
         {
             _cmdlet?.WriteLog(logLevel, eventId.Id, FormatMessage(state, exception, formatter), exception);
         }
-            
+
     }
 
     /// <inheritdoc/>

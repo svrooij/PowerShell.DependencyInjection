@@ -23,13 +23,13 @@ public class DependencyCmdletTests
         // arrange
         var cmdlet = new TestSampleCmdlet();
         cmdlet.TriggerBeginProcessing();
-        
+
         // act
         cmdlet.TriggerProcessRecord();
-        
+
         // assert
         // Happens in the ProcessRecordAsync method
-        
+
     }
 }
 
@@ -38,7 +38,7 @@ public class TestSampleCmdlet : DependencyCmdlet<TestStartup>
 {
     [ServiceDependency]
     internal TestService TestService { get; set; }
-    
+
     [ServiceDependency]
     internal ILogger<TestSampleCmdlet> _logger;
 
@@ -52,17 +52,17 @@ public class TestSampleCmdlet : DependencyCmdlet<TestStartup>
     {
         this.BeginProcessing();
     }
-    
+
     public void TriggerEndProcessing()
     {
         this.EndProcessing();
     }
-    
+
     public void TriggerStopProcessing()
     {
         this.StopProcessing();
     }
-    
+
     public void TriggerProcessRecord()
     {
         this.ProcessRecord();

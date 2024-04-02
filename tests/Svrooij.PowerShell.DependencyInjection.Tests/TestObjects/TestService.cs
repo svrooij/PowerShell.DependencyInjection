@@ -1,6 +1,6 @@
 ﻿namespace Svrooij.PowerShell.DependencyInjection.Tests.TestObjects;
 
-internal class  TestService
+internal class TestService
 {
     public void DoSomething()
     {
