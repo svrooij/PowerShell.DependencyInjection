@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;netstandard2.0;</TargetFrameworks> <!---->
+    <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.0;</TargetFrameworks> <!---->
 	<AssemblyName>Svrooij.PowerShell.DependencyInjection</AssemblyName>
 	<LangVersion>10.0</LangVersion>
 	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
@@ -33,6 +33,12 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.32" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="3.1.32" />
   </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.19" />
+	</ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
@@ -44,6 +50,6 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
-		<PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.1" />
+		<PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.2" />
 	</ItemGroup>
 </Project>
