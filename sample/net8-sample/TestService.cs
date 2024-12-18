@@ -21,7 +21,7 @@ namespace Svrooij.PowerShell.DependencyInjection.Sample
         public async Task DoSomethingAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting DoSomethingAsync() which can be cancelled with CTRL+C");
-            await Task.Delay(5000, cancellationToken);
+            //await Task.Delay(5000, cancellationToken);
             _logger.LogInformation("Finsihed DoSomethingAsync()");
         }
     }

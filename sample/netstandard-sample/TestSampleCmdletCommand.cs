@@ -4,12 +4,14 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using System.Threading.Tasks;
+using Svrooij.PowerShell.DI;
 
 namespace Svrooij.PowerShell.DependencyInjection.SamplePs5
 {
     [Cmdlet(VerbsDiagnostic.Test, "SampleCmdlet")]
     [OutputType(typeof(FavoriteStuff))]
-    public class TestSampleCmdletCommand : DependencyCmdlet<Startup>
+    [GenerateBindings]
+    public partial class TestSampleCmdletCommand : DependencyCmdlet<Startup>
     {
         [Parameter(
             Mandatory = true,

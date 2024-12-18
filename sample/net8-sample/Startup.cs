@@ -1,7 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Svrooij.PowerShell.DependencyInjection.Logging;
+using Svrooij.PowerShell.DI;
+using Svrooij.PowerShell.DI.Logging;
 
 namespace Svrooij.PowerShell.DependencyInjection.Sample
 {
