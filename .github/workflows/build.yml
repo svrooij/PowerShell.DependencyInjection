@@ -83,3 +83,5 @@ jobs:
         if: always()
         with:
           files: ${{ github.workspace }}/testresults/*.xml
+          comment_mode: failures
+          check_run: false
