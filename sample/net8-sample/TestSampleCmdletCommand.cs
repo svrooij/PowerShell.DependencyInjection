@@ -43,8 +43,8 @@ public partial class TestSampleCmdletCommand : DependencyCmdlet<Startup>
         // In the startup class we configured the logging level for this namespace to Debug
         _logger.LogDebug("FavoriteNumber: {FavoriteNumber}, FavoritePet: {favoritePet}", FavoriteNumber, FavoritePet);
 
-        _logger.LogWarning("This is a warning");
-        _logger.LogError("This is an error");
+        //_logger.LogWarning("This is a warning");
+        //_logger.LogError("This is an error");
 
         await _testService.DoSomethingAsync(cancellationToken);
 

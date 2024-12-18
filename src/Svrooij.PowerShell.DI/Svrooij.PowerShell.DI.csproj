@@ -9,25 +9,26 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>Latest</LangVersion>
-	<!-- This part is for the source generator -->
-	<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-	<IsRoslynComponent>true</IsRoslynComponent>
-	<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-	<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-	<!-- This part is for the source generator -->
-	  
-	<!-- This part is for the package -->
-	<Authors>Stephan van Rooij</Authors>
-	<Copyright>Copyright (c) 2024 Stephan van Rooij</Copyright>
-	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<PackageProjectUrl>https://github.com/svrooij/PowerShell.DependencyInjection/</PackageProjectUrl>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-	<PackageTags>PowerShell;Dependency Injection;async</PackageTags>
-	<RepositoryType>git</RepositoryType>
-	<RepositoryUrl>https://github.com/svrooij/PowerShell.DependencyInjection.git</RepositoryUrl>
-	<Title>PowerShell Dependency Injection by @svrooij</Title>
-	<!-- This part is for the package -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- This part is for the source generator -->
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+    <!-- This part is for the source generator -->
+      
+    <!-- This part is for the package -->
+    <Authors>Stephan van Rooij</Authors>
+    <Copyright>Copyright (c) 2024 Stephan van Rooij</Copyright>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/svrooij/PowerShell.DependencyInjection/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageTags>PowerShell;Dependency Injection;async</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/svrooij/PowerShell.DependencyInjection.git</RepositoryUrl>
+    <Title>PowerShell Dependency Injection by @svrooij</Title>
+    <!-- This part is for the package -->
   </PropertyGroup>
 
   <!-- The following libraries include the source generator interfaces and types we need -->

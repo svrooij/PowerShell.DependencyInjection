@@ -3,6 +3,10 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
+      - feature/source-generator
 
 jobs:
   build:
@@ -30,7 +34,18 @@ jobs:
             ${{ runner.os }}-nuget            
 
       - name: 🎒 Load packages
-        run: dotnet restore ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj
+        run: dotnet restore ./src/Svrooij.PowerShell.DI/Svrooij.PowerShell.DI.csproj
 
-      - name: 🛠️ Build code
-        run: dotnet build ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj --configuration Release --no-restore
+      - name: 🛠️ Build library
+        run: dotnet build ./src/Svrooij.PowerShell.DI/Svrooij.PowerShell.DI.csproj --configuration Release --no-restore
+      
+      - name: 🛠️ Build sample project
+        run: dotnet build ./sample/net8-sample/Svrooij.PowerShell.DependencyInjection.Sample.csproj --configuration Release
+
+      - name: 🧪 Install pester
+        run: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
+        shell: pwsh
+      
+      - name: 🧪 Run test
+        run: Invoke-Pester -Path ./tests/Pester-Sample-Module -Output Detailed -Show Failed
+        shell: pwsh

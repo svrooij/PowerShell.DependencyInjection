@@ -35,18 +35,18 @@ jobs:
             ${{ runner.os }}-nuget            
 
       - name: 🎒 Load packages
-        run: dotnet restore ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj
+        run: dotnet restore ./src/Svrooij.PowerShell.DI/Svrooij.PowerShell.DI.csproj
 
       - name: 🛠️ Build code
         shell: pwsh
-        run: dotnet build ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj --configuration Release --no-restore -p:Version=$("${{ github.ref_name }}".Substring(1))
+        run: dotnet build ./src/Svrooij.PowerShell.DI/Svrooij.PowerShell.DI.csproj --configuration Release --no-restore -p:Version=$("${{ github.ref_name }}".Substring(1))
 
       - name: 📦 Package library
         shell: pwsh
-        run: dotnet pack ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj --configuration Release --no-build -p:Version=$("${{ github.ref_name }}".Substring(1))
+        run: dotnet pack ./src/Svrooij.PowerShell.DI/Svrooij.PowerShell.DI.csproj --configuration Release --no-build -p:Version=$("${{ github.ref_name }}".Substring(1))
 
       - name: ✈️ Publish package
-        run: dotnet nuget push ./src/Svrooij.PowerShell.DependencyInjection/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push ./src/Svrooij.PowerShell.DI/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_TOKEN }}
 
@@ -55,9 +55,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ./src/Svrooij.PowerShell.DependencyInjection/bin/Release/*.nupkg
+            ./src/Svrooij.PowerShell.DI/bin/Release/*.nupkg
           tag_name: ${{ github.ref_name }}
           body: |
-            This package is available on NuGet: https://www.nuget.org/packages/Svrooij.PowerShell.DependencyInjection/
+            This package is available on NuGet: https://www.nuget.org/packages/Svrooij.PowerShell.DI/
           generate_release_notes: true
           append_body: true
