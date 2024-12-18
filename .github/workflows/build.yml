@@ -47,5 +47,32 @@ jobs:
         shell: pwsh
       
       - name: 🧪 Run test
-        run: Invoke-Pester -Path ./tests/Pester-Sample-Module -Output Detailed -Show Failed
         shell: pwsh
+        run: |
+          Import-Module ./sample/net8-sample/bin/Release/Svrooij.PowerShell.DependencyInjection.Sample.dll -Force
+          $pesterConfig = [PesterConfiguration]@{
+            Output = @{
+              Verbosity = "Normal"
+              CIFormat = "Auto"
+              StackTraceVerbosity = "FirstLine"
+            }
+            TestResult = @{
+              Enabled = $true
+              OutputPath = "${{ github.workspace }}/testresults/TestResults.xml"
+              OutputFormat = "JUnitXml"
+            }
+            Run = @{
+              Path = "./tests/Pester-SampleModule"
+              Exit = $true
+            }
+            Should = @{
+              ErrorAction = "Continue"
+            }
+          }
+          Invoke-Pester -Configuration $pesterConfig
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: ${{ github.workspace }}/testresults/*.xml
