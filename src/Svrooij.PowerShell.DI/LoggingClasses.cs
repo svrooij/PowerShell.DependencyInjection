@@ -15,6 +15,7 @@ using System.Linq;
 using System.Management.Automation;
 namespace Svrooij.PowerShell.DI.Logging
 {
+    #nullable enable
     /// <summary>
     /// <see cref=""Mel.ILogger""/> that outputs to the PowerShell <see cref=""PSCmdlet""/>
     /// </summary>

@@ -39,6 +39,7 @@ using System.Threading.Tasks;
 using Svrooij.PowerShell.DI.Logging;
 namespace Svrooij.PowerShell.DI
 {
+    #nullable enable
     /// <summary>
     /// Base class for startup classes for PowerShell cmdlets.
     /// Create a class that extends this class and override <see cref=""ConfigureServices(IServiceCollection)""/>.
