@@ -1,4 +1,4 @@
-name: Build and Test
+name: 🧪 Test
 on:
   pull_request:
     branches:
@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - feature/source-generator
 
 jobs:
   build:
