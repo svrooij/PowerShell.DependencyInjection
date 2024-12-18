@@ -57,7 +57,7 @@ namespace Svrooij.PowerShell.DI.Logging
         /// <inheritdoc/>
         public IDisposable BeginScope<TState>(TState state) where TState : notnull => default!;
 
-        private string FormatMessage<TState>(TState state, Exception exception, Func<TState, Exception, string> formatter)
+        private string FormatMessage<TState>(TState state, Exception exception?, Func<TState, Exception?, string> formatter)
         {
             var typeName = _cmdlet.GetType().FullName;
             var config = _getConfig();
