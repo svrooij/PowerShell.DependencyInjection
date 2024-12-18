@@ -11,6 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
 
     steps:
       - name: 👨‍💻 Check-out code
@@ -49,7 +54,7 @@ jobs:
       - name: 🧪 Run test
         shell: pwsh
         run: |
-          Import-Module ./sample/net8-sample/bin/Release/Svrooij.PowerShell.DependencyInjection.Sample.dll -Force
+          Import-Module ./sample/net8-sample/bin/Release/net8.0/Svrooij.PowerShell.DependencyInjection.Sample.dll -Force
           $pesterConfig = [PesterConfiguration]@{
             Output = @{
               Verbosity = "Normal"
@@ -71,7 +76,7 @@ jobs:
           }
           Invoke-Pester -Configuration $pesterConfig
 
-      - name: Publish Test Results
+      - name: 📃 Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
