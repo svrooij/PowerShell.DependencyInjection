@@ -9,9 +9,10 @@ Describe "SampleModule" {
     }
 
     It "Should return input" {
-      $result = Test-SampleCmdlet 42 -FavoritePet Cat
+      $result = Test-SampleCmdlet -FavoriteNumber 42 -FavoritePet Cat
       # Check if the result is an object with the correct properties
-      $result | Should -BeAnObject -And -HaveProperty 'Number' -And -HaveProperty 'FavoritePet'
+      $result.FavoriteNumber | Should -Be 42
+      $result.FavoritePet | Should -Be 'Cat'
     }
   }
 }
