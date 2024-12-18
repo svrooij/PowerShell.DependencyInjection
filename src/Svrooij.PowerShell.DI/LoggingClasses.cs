@@ -37,7 +37,7 @@ namespace Svrooij.PowerShell.DI.Logging
         private readonly PSCmdlet _cmdlet;
 
         /// <inheritdoc/>
-        public void Log<TState>(Mel.LogLevel logLevel, Mel.EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(Mel.LogLevel logLevel, Mel.EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             if (IsEnabled(logLevel))
             {
@@ -178,10 +178,9 @@ namespace Svrooij.PowerShell.DI.Logging
             _onChangeToken?.Dispose();
         }
     }
+
     internal static class PsCmdletExtensions
     {
-    #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-
         /// <summary>
         /// Write a log message to the provider PowerShell <see cref=""PSCmdlet""/>
         /// </summary>
@@ -191,7 +190,6 @@ namespace Svrooij.PowerShell.DI.Logging
         /// <param name=""message"">Log message</param>
         /// <param name=""e"">(optional) <see cref=""Exception""/></param>
         public static void WriteLog(this PSCmdlet cmdlet, Mel.LogLevel logLevel, int eventId, string message, Exception? e = null)
-    #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
         {
             switch (logLevel)
             {

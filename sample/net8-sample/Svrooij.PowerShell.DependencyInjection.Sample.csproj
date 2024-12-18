@@ -5,7 +5,6 @@
     <AssemblyName>Svrooij.PowerShell.DependencyInjection.Sample</AssemblyName>
 	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <NoWarn>CS0649</NoWarn>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
