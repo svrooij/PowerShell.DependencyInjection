@@ -1,12 +1,21 @@
-name: Build and Test
+name: 🧪 Test
 on:
   pull_request:
+    branches:
+      - main
+  push:
     branches:
       - main
 
 jobs:
   build:
+    name: 🧪 Test sample module
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
 
     steps:
       - name: 👨‍💻 Check-out code
@@ -30,7 +39,48 @@ jobs:
             ${{ runner.os }}-nuget            
 
       - name: 🎒 Load packages
-        run: dotnet restore ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj
+        run: dotnet restore ./src/Svrooij.PowerShell.DI/Svrooij.PowerShell.DI.csproj
 
-      - name: 🛠️ Build code
-        run: dotnet build ./src/Svrooij.PowerShell.DependencyInjection/Svrooij.PowerShell.DependencyInjection.csproj --configuration Release --no-restore
+      - name: 🛠️ Build library
+        run: dotnet build ./src/Svrooij.PowerShell.DI/Svrooij.PowerShell.DI.csproj --configuration Release --no-restore
+      
+      - name: 🛠️ Build sample project
+        run: dotnet build ./sample/net8-sample/Svrooij.PowerShell.DependencyInjection.Sample.csproj --configuration Release
+
+      - name: 🧪 Install pester
+        run: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
+        shell: pwsh
+      
+      - name: 🧪 Run test
+        shell: pwsh
+        run: |
+          Import-Module ./sample/net8-sample/bin/Release/net8.0/Svrooij.PowerShell.DependencyInjection.Sample.dll -Force
+          Import-Module Pester
+          $pesterConfig = [PesterConfiguration]@{
+            Output = @{
+              Verbosity = "Normal"
+              CIFormat = "Auto"
+              StackTraceVerbosity = "FirstLine"
+            }
+            TestResult = @{
+              Enabled = $true
+              OutputPath = "${{ github.workspace }}/testresults/TestResults.xml"
+              OutputFormat = "JUnitXml"
+            }
+            Run = @{
+              Path = "./tests/Pester-SampleModule"
+              Exit = $true
+            }
+            Should = @{
+              ErrorAction = "Continue"
+            }
+          }
+          Invoke-Pester -Configuration $pesterConfig
+
+      - name: 📃 Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: ${{ github.workspace }}/testresults/*.xml
+          comment_mode: failures
+          check_run: false

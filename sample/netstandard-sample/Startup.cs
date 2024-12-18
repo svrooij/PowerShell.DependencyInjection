@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Svrooij.PowerShell.DI;
 using System;
 using System.Collections.Generic;
 using System.Text;
