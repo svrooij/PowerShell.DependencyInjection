@@ -40,11 +40,22 @@ public class PowerShellGenerator : IIncrementalGenerator
 
     private static bool IsPartialClassWithAttributes(SyntaxNode node)
     {
-        // Not checking if the fields or properties actually have the excepted ServiceDependencyAttribute, but this seems to be fast enough for now.
-        return node is ClassDeclarationSyntax classDeclarationSyntax &&
-               classDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword) &&
-               (classDeclarationSyntax.Members.OfType<FieldDeclarationSyntax>().Any(f => f.AttributeLists.Count > 0) ||
-               classDeclarationSyntax.Members.OfType<PropertyDeclarationSyntax>().Any(p => p.AttributeLists.Count > 0));
+        if (node is not ClassDeclarationSyntax classDecl)
+            return false;
+
+        // Fast check for 'partial'
+        if (!classDecl.Modifiers.Any(SyntaxKind.PartialKeyword))
+            return false;
+
+        // Only check fields/properties if class is partial
+        foreach (var member in classDecl.Members)
+        {
+            if (member is FieldDeclarationSyntax field && field.AttributeLists.Count > 0)
+                return true;
+            if (member is PropertyDeclarationSyntax prop && prop.AttributeLists.Count > 0)
+                return true;
+        }
+        return false;
     }
 
     private static BindingToGenerate? GetBindingToGenerate(GeneratorAttributeSyntaxContext context)
@@ -111,6 +122,7 @@ public class PowerShellGenerator : IIncrementalGenerator
     {
         var sourceBuilder = new StringBuilder();
         sourceBuilder.AppendLine("using Microsoft.Extensions.DependencyInjection;");
+        sourceBuilder.AppendLine("using Microsoft.Extensions.Logging;");
         sourceBuilder.AppendLine("using Svrooij.PowerShell.DI;");
         sourceBuilder.AppendLine("using System;");
 

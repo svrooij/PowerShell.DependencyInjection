@@ -202,9 +202,7 @@ namespace Svrooij.PowerShell.DI.Logging
                     break;
 
                 case Mel.LogLevel.Information:
-                    cmdlet.WriteInformation(message, new string[] { });
-                    // The line above does not work, so we use this workaround
-                    Console.WriteLine($""INFO: {message}"");
+                    cmdlet.Host.UI.WriteLine($""INFO: {message}"");
                     break;
 
                 case Mel.LogLevel.Warning:
