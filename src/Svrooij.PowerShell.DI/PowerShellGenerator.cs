@@ -111,6 +111,7 @@ public class PowerShellGenerator : IIncrementalGenerator
     {
         var sourceBuilder = new StringBuilder();
         sourceBuilder.AppendLine("using Microsoft.Extensions.DependencyInjection;");
+        sourceBuilder.AppendLine("using Microsoft.Extensions.Logging;");
         sourceBuilder.AppendLine("using Svrooij.PowerShell.DI;");
         sourceBuilder.AppendLine("using System;");
 

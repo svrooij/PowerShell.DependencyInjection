@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.6" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.11" />
   </ItemGroup>
 
   <ItemGroup>

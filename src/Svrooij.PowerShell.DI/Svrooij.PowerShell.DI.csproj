@@ -4,8 +4,10 @@
     <!-- 👇 Source generators must target netstandard 2.0 -->
     <TargetFramework>netstandard2.0</TargetFramework> 
     <!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
-    <IncludeBuildOutput>false</IncludeBuildOutput> 
-    <!-- 👇 New project, why not! -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+	<!-- 👇 IncludeBuildOutput triggers a NU5128 warning -->
+	<NoWarn>NU5128</NoWarn>
+	<!-- 👇 New project, why not! -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>Latest</LangVersion>
@@ -33,8 +35,8 @@
 
   <!-- The following libraries include the source generator interfaces and types we need -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" PrivateAssets="all" />
   </ItemGroup>
 
     <!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
@@ -43,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<None Include="README.md" Pack="true" PackagePath="\README.md" />
 	<None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\LICENSE.txt" />
   </ItemGroup>
   

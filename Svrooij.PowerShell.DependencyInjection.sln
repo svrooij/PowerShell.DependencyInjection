@@ -17,6 +17,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E7666807
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Svrooij.PowerShell.DI", "src\Svrooij.PowerShell.DI\Svrooij.PowerShell.DI.csproj", "{261767B3-66E3-4168-915E-8E6D3239EC6E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{229B85A9-389F-4425-B5B3-37AD5C20238D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-and-release.yml = .github\workflows\build-and-release.yml
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +56,7 @@ Global
 		{1D83A5AF-85F2-48D2-8314-7E97A4DCB4C8} = {5CDFBAB6-7C11-4521-A5D8-512EB408702F}
 		{AF38E5AE-C08E-43C7-88C6-3D8C28E970E4} = {5CDFBAB6-7C11-4521-A5D8-512EB408702F}
 		{261767B3-66E3-4168-915E-8E6D3239EC6E} = {989ECFF3-6FEA-4163-9658-92C93377CEFB}
+		{229B85A9-389F-4425-B5B3-37AD5C20238D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {207BD340-4D46-44B6-ADEA-C8AD65AB32C3}
