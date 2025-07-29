@@ -30,9 +30,11 @@ namespace Svrooij.PowerShell.DI.Logging
             this._name = name;
             this._getConfig = getConfig;
             this._cmdlet = cmdlet;
+            this._cmdletName = cmdlet.GetType().FullName ?? throw new ArgumentNullException(nameof(cmdlet), ""Cmdlet cannot be null"");
         }
 
         private readonly string _name;
+        private readonly string _cmdletName;
         private readonly Func<PowerShellLoggerConfiguration> _getConfig;
         private readonly PSCmdlet _cmdlet;
 
@@ -59,9 +61,8 @@ namespace Svrooij.PowerShell.DI.Logging
 
         private string FormatMessage<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
-            var typeName = _cmdlet.GetType().FullName;
             var config = _getConfig();
-            if (config.IncludeCategory && typeName != _name)
+            if (config.IncludeCategory && _cmdletName != _name)
             {
                 return config.StripNamespace
                     ? $""[{_name.Substring(_name.LastIndexOf('.') + 1)}] {formatter(state, exception)}""
@@ -109,16 +110,31 @@ namespace Svrooij.PowerShell.DI.Logging
                 return level;
             }
 
-            var key = LogLevel.Keys.Where(name.StartsWith).OrderByDescending(k => k.Length).FirstOrDefault();
-            // Optimize the lookup by adding the found key to the dictionary
-            if (key != null)
+            // Searching without linq for more speed  
+            string? bestMatch = null;
+            foreach (var key in LogLevel.Keys)
             {
-                LogLevel[name] = LogLevel[key];
-                return LogLevel[key];
+                if (name.StartsWith(key, StringComparison.Ordinal) &&
+                    (bestMatch == null || key.Length > bestMatch.Length))
+                {
+                    bestMatch = key;
+                }
+            }
+
+            if (bestMatch != null)
+            {
+                var bestLevel = LogLevel[bestMatch];
+                LogLevel[name] = bestLevel; // Cache for next time
+                return bestLevel;
             }
 
             return DefaultLevel;
         }
+    }
+
+    public sealed class PowerShellLoggerContainer
+    {
+        internal PSCmdlet? Cmdlet { get; set; }
     }
 
     /// <summary>
@@ -127,9 +143,9 @@ namespace Svrooij.PowerShell.DI.Logging
     [Mel.ProviderAlias(""Powershell"")]
     public sealed class PowerShellLoggerProvider : Mel.ILoggerProvider
     {
-        private PSCmdlet? cmdlet;
         private readonly IDisposable? _onChangeToken;
         private PowerShellLoggerConfiguration _currentConfig;
+        private readonly PowerShellLoggerContainer _powerShellLoggerContainer;
 
         private readonly ConcurrentDictionary<string, PowerShellLogger> _loggers =
             new ConcurrentDictionary<string, PowerShellLogger>(StringComparer.OrdinalIgnoreCase);
@@ -138,20 +154,16 @@ namespace Svrooij.PowerShell.DI.Logging
         /// Creates a new instance of <see cref=""PowerShellLoggerProvider""/>
         /// </summary>
         /// <param name=""config"">Auto loaded configuration</param>
-        public PowerShellLoggerProvider(IOptionsMonitor<PowerShellLoggerConfiguration> config)
+        public PowerShellLoggerProvider(IOptionsMonitor<PowerShellLoggerConfiguration> config, PowerShellLoggerContainer powerShellLoggerContainer)
         {
             _currentConfig = config.CurrentValue;
             _onChangeToken = config.OnChange(updatedConfig => _currentConfig = updatedConfig);
+            _powerShellLoggerContainer = powerShellLoggerContainer;
         }
 
         private PowerShellLoggerConfiguration GetCurrentConfig()
         {
             return _currentConfig;
-        }
-
-        internal void SetCmdlet(PSCmdlet cmdlet)
-        {
-            this.cmdlet = cmdlet;
         }
 
         /// <summary>
@@ -164,7 +176,7 @@ namespace Svrooij.PowerShell.DI.Logging
             // What to do if cmdlet is null?
             return _loggers.AddOrUpdate(
                   categoryName,
-                  name => new PowerShellLogger(name, GetCurrentConfig, cmdlet!),
+                  name => new PowerShellLogger(name, GetCurrentConfig, _powerShellLoggerContainer?.Cmdlet!),
                   (name, logger) => logger
             );
         }
@@ -222,22 +234,15 @@ namespace Svrooij.PowerShell.DI.Logging
         /// Adds a PowerShell logger named 'PowerShell' to the logger factory.
         /// </summary>
         /// <param name=""builder""><see cref=""Mel.ILoggingBuilder""/> that you get when you call serviceCollection.AddLogging(builder =>)</param>
-        /// <param name=""cmdlet"">The <see cref=""PSCmdlet""/> that is used to output the log info</param>
         /// <returns><see cref=""Mel.ILoggingBuilder""/> to support chaining</returns>
-        public static Mel.ILoggingBuilder AddPowerShellLogging(this Mel.ILoggingBuilder builder, PSCmdlet cmdlet)
+        public static Mel.ILoggingBuilder AddPowerShellLogging(this Mel.ILoggingBuilder builder)
         {
             builder.AddConfiguration();
 
-            // Register provider (to use DI for the properties)
-            builder.Services.AddSingleton<PowerShellLoggerProvider>();
+            builder.Services.AddSingleton<PowerShellLoggerContainer>();
 
-            // Register the previous registered provider ILoggerProvider, so the SetCmdlet() method can be called.
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<Mel.ILoggerProvider, PowerShellLoggerProvider>(fac =>
-            {
-                var p = fac.GetRequiredService<PowerShellLoggerProvider>();
-                p.SetCmdlet(cmdlet);
-                return p;
-            }));
+            // Register provider (to use DI for the properties)
+            builder.Services.AddScoped<Mel.ILoggerProvider, PowerShellLoggerProvider>();
 
             // Register the logger options
             LoggerProviderOptions.RegisterProviderOptions
@@ -252,25 +257,19 @@ namespace Svrooij.PowerShell.DI.Logging
         /// Adds a PowerShell logger named 'PowerShell' to the service collection.
         /// </summary>
         /// <param name=""services""><see cref=""IServiceCollection""/> you want to add logging to</param>
-        /// <param name=""cmdlet""><see cref=""PSCmdlet""/> that is used to output the log info</param>
         /// <param name=""configure"">(optional) action to configure the <see cref=""PowerShellLoggerConfiguration""/></param>
         /// <returns><see cref=""IServiceCollection""/> to support chaining</returns>
         /// <exception cref=""ArgumentNullException"">When one of the required arguments are not set</exception>
-        internal static IServiceCollection AddPowerShellLogging(this IServiceCollection services, PSCmdlet cmdlet, Action<PowerShellLoggerConfiguration>? configure = null)
+        internal static IServiceCollection AddPowerShellLogging(this IServiceCollection services, Action<PowerShellLoggerConfiguration>? configure = null)
         {
             if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (cmdlet is null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
-
             services.AddLogging(builder =>
             {
-                builder.AddPowerShellLogging(cmdlet);
+                builder.AddPowerShellLogging();
                 if (configure != null)
                 {
                     builder.Services.Configure(configure);

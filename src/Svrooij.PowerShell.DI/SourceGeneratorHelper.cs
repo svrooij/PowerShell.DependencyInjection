@@ -31,6 +31,7 @@ namespace Svrooij.PowerShell.DI
 internal const string Classes = @"
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Management.Automation;
 using System.Runtime.CompilerServices;
@@ -39,6 +40,13 @@ using System.Threading.Tasks;
 using Svrooij.PowerShell.DI.Logging;
 namespace Svrooij.PowerShell.DI
 {
+    internal static class ServiceProviderCache
+    {
+        /// <summary>
+        /// Cache for service providers, keyed by the startup type.
+        /// </summary>
+        internal static readonly ConcurrentDictionary<Type, IServiceProvider> ProviderCache = new ConcurrentDictionary<Type, IServiceProvider>();
+    }
     #nullable enable
     /// <summary>
     /// Base class for startup classes for PowerShell cmdlets.
@@ -50,9 +58,9 @@ namespace Svrooij.PowerShell.DI
     /// </remarks>
     public abstract class PsStartup
     {
-        internal void ConfigurePowerShellServices(IServiceCollection services, PSCmdlet cmdlet)
+        internal void ConfigurePowerShellServices(IServiceCollection services)
         {
-            services.AddPowerShellLogging(cmdlet, ConfigurePowerShellLogging());
+            services.AddPowerShellLogging(ConfigurePowerShellLogging());
         }
 
         /// <summary>
@@ -86,9 +94,10 @@ namespace Svrooij.PowerShell.DI
     /// </summary>
     /// <typeparam name=""T"">Your startup class that has to extend <see cref=""PsStartup""/> and extend <see cref=""PsStartup.ConfigureServices(IServiceCollection)""/>.</typeparam>
     /// <remarks>You should override <see cref=""DependencyCmdlet{T}.ProcessRecordAsync(CancellationToken)""/>. A lot of other methods are blocked from overriding.</remarks>
-    public abstract class DependencyCmdlet<T> : PSCmdlet where T : PsStartup, new()
+    public abstract class DependencyCmdlet<TStartup> : PSCmdlet where TStartup : PsStartup, new()
     {
         private readonly IServiceProvider _serviceProvider;
+        private IServiceScope? _serviceScope;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         /// <summary>
@@ -96,11 +105,15 @@ namespace Svrooij.PowerShell.DI
         /// </summary>
         protected DependencyCmdlet()
         {
-            var startup = new T();
-            var services = new ServiceCollection();
-            startup.ConfigurePowerShellServices(services, this);
-            startup.ConfigureServices(services);
-            _serviceProvider = services.BuildServiceProvider();
+            var startupType = typeof(TStartup);
+            _serviceProvider = ServiceProviderCache.ProviderCache.GetOrAdd(startupType, _ =>
+            {
+                var startup = new TStartup();
+                var services = new ServiceCollection();
+                startup.ConfigurePowerShellServices(services);
+                startup.ConfigureServices(services);
+                return services.BuildServiceProvider();
+            });
         }
 
         /// <summary>
@@ -118,7 +131,7 @@ namespace Svrooij.PowerShell.DI
         /// <summary>
         /// Override this property to bind dependencies manually, the service provider is provided by the base library.
         /// </summary>
-        protected virtual Action<DependencyCmdlet<T>, IServiceProvider> BindDependencies
+        protected virtual Action<object, IServiceProvider> BindDependencies
         {
             get
             {
@@ -141,7 +154,9 @@ namespace Svrooij.PowerShell.DI
         /// <remarks>This is called by PowerShell automatically. And is used to bind dependencies.</remarks>
         protected sealed override void BeginProcessing()
         {
-            BindDependencies(this, _serviceProvider);
+            _serviceScope = _serviceProvider.CreateScope();
+            _serviceScope.ServiceProvider.GetRequiredService<PowerShellLoggerContainer>().Cmdlet = this;
+            BindDependencies(this, _serviceScope.ServiceProvider);
             base.BeginProcessing();
         }
 
@@ -161,6 +176,7 @@ namespace Svrooij.PowerShell.DI
         /// <remarks>This is called by PowerShell automatically.</remarks>
         protected sealed override void EndProcessing()
         {
+            _serviceScope?.Dispose();
             base.EndProcessing();
         }
     }
@@ -233,8 +249,6 @@ namespace Svrooij.PowerShell.DI
             }
         }
     }
-
-
 }";
 
 }
