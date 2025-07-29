@@ -47,10 +47,6 @@ jobs:
       - name: 🛠️ Build sample project
         run: dotnet build ./sample/net8-sample/Svrooij.PowerShell.DependencyInjection.Sample.csproj --configuration Release
 
-      - name: 🧪 Install pester
-        run: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
-        shell: pwsh
-      
       - name: 🧪 Run test
         shell: pwsh
         run: |

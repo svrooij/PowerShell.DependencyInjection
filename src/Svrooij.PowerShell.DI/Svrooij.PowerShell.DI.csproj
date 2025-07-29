@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <!-- 👇 Source generators must target netstandard 2.0 -->
     <TargetFramework>netstandard2.0</TargetFramework> 
     <!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
-	<!-- 👇 IncludeBuildOutput triggers a NU5128 warning -->
-	<NoWarn>NU5128</NoWarn>
-	<!-- 👇 New project, why not! -->
+	  <!-- 👇 IncludeBuildOutput triggers a NU5128 warning -->
+	  <NoWarn>NU5128</NoWarn>
+	  <!-- 👇 New project, why not! -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>Latest</LangVersion>
@@ -45,8 +44,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	<None Include="README.md" Pack="true" PackagePath="\README.md" />
-	<None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\LICENSE.txt" />
+	  <None Include="..\..\README.md" Pack="true" PackagePath="\README.md" />
+	  <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\LICENSE.txt" />
   </ItemGroup>
   
 </Project>
