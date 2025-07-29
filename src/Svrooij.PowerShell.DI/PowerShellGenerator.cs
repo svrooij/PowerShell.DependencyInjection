@@ -131,7 +131,7 @@ public class PowerShellGenerator : IIncrementalGenerator
         sourceBuilder.AppendLine($"    public partial class {bindingToGenerate.ClassName}");
         sourceBuilder.AppendLine("    {");
         sourceBuilder.AppendLine(
-            $"        protected override Action<{bindingToGenerate.BaseClass}, IServiceProvider> BindDependencies =>");
+            $"        protected override Action<object, IServiceProvider> BindDependencies =>");
         sourceBuilder.AppendLine("            (_, serviceProvider) =>");
         sourceBuilder.AppendLine("            {");
         foreach (BindingPropertyToGenerate property in bindingToGenerate.Properties)

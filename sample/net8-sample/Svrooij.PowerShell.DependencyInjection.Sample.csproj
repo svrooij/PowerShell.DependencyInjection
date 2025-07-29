@@ -3,9 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Svrooij.PowerShell.DependencyInjection.Sample</AssemblyName>
-	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <NoWarn>CS0649</NoWarn>
+	<EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>
+	<CompilerGeneratedFilesOutputPath>.\generated\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="generated\**" />
+	<None Include="generated\**\*.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
