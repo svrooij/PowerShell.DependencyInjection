@@ -56,6 +56,9 @@ namespace Svrooij.PowerShell.DI
         private volatile bool _addingCompleted;
         private volatile bool _disposed;
 
+        /// <summary>
+        /// Deconstructor that disposes the synchronization context.
+        /// </summary>
         public void Dispose()
         {
             if (_disposed) return;
@@ -98,6 +101,9 @@ namespace Svrooij.PowerShell.DI
             _workAvailable.Set();
         }
 
+        /// <summary>
+        /// Add a new work item to the synchronization context's queue.
+        /// </summary>
         public override void Post(SendOrPostCallback callback, object callbackState)
         {
             if (callback == null)
@@ -116,6 +122,9 @@ namespace Svrooij.PowerShell.DI
             _workAvailable.Set();
         }
 
+        /// <summary>
+        /// Add a new work item to the synchronization context's queue and wait for it to complete.
+        /// </summary>
         public static void RunSynchronized(Func<Task> asyncOperation)
         {
             if (asyncOperation == null)
@@ -159,6 +168,9 @@ namespace Svrooij.PowerShell.DI
             }
         }
 
+        /// <summary>
+        /// Add a new work item to the synchronization context's queue and wait for it to complete, returning the result.
+        /// </summary>
         public static TResult RunSynchronized<TResult>(Func<Task<TResult>> asyncOperation)
         {
             if (asyncOperation == null)

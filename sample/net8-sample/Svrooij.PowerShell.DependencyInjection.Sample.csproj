@@ -7,6 +7,7 @@
     <NoWarn>CS0649</NoWarn>
 	<EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>
 	<CompilerGeneratedFilesOutputPath>.\generated\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

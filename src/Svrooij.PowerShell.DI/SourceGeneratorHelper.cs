@@ -92,7 +92,7 @@ namespace Svrooij.PowerShell.DI
     /// Base class for cmdlets that use dependency injection.
     /// <para>Use the <see cref=""GenerateBindingsAttribute""/> to tell the compiler to generate binding code instead of using reflection</para>
     /// </summary>
-    /// <typeparam name=""T"">Your startup class that has to extend <see cref=""PsStartup""/> and extend <see cref=""PsStartup.ConfigureServices(IServiceCollection)""/>.</typeparam>
+    /// <typeparam name=""TStartup"">Your startup class that has to extend <see cref=""PsStartup""/> and extend <see cref=""PsStartup.ConfigureServices(IServiceCollection)""/>.</typeparam>
     /// <remarks>You should override <see cref=""DependencyCmdlet{T}.ProcessRecordAsync(CancellationToken)""/>. A lot of other methods are blocked from overriding.</remarks>
     public abstract class DependencyCmdlet<TStartup> : PSCmdlet where TStartup : PsStartup, new()
     {

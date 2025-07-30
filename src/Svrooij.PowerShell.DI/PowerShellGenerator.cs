@@ -130,6 +130,8 @@ public class PowerShellGenerator : IIncrementalGenerator
         sourceBuilder.AppendLine("{");
         sourceBuilder.AppendLine($"    public partial class {bindingToGenerate.ClassName}");
         sourceBuilder.AppendLine("    {");
+        sourceBuilder.AppendLine("        #nullable enable");
+        sourceBuilder.AppendLine($"        /// <summary>Source generated dependency binding for: <see cref=\"{bindingToGenerate.ClassName}\"/></summary>");
         sourceBuilder.AppendLine(
             $"        protected override Action<object, IServiceProvider> BindDependencies =>");
         sourceBuilder.AppendLine("            (_, serviceProvider) =>");
