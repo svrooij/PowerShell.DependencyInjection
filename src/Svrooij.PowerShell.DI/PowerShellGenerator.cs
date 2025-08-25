@@ -15,7 +15,8 @@ public class PowerShellGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // Create the code files in the project (so you don't have to include an additional DLL)
-        context.RegisterPostInitializationOutput(static ctx => {
+        context.RegisterPostInitializationOutput(static ctx =>
+        {
             ctx.AddSource("Attributes.g.cs", SourceGenerationHelper.Attributes);
             ctx.AddSource("Logging.g.cs", LoggingClasses.Classes);
             ctx.AddSource("ThreadAffinitiveSynchronizationContext.g.cs", ThreadSynchronisation.ThreadAffinitiveSynchronizationContext);
@@ -94,12 +95,12 @@ public class PowerShellGenerator : IIncrementalGenerator
                 f.Required
                 )).ToImmutableArray();
 
-            return new BindingToGenerate(
-                classDeclarationSyntax.BaseList!.Types[0].ToString(),
-                classDeclarationSyntax.Identifier.ToString(),
-                @namespace ?? "oops",
-                fields);
-            //fields.ToImmutableArray());
+        return new BindingToGenerate(
+            classDeclarationSyntax.BaseList!.Types[0].ToString(),
+            classDeclarationSyntax.Identifier.ToString(),
+            @namespace ?? "oops",
+            fields);
+        //fields.ToImmutableArray());
     }
 
     private static void Execute(Compilation compilation, ImmutableArray<BindingToGenerate?> classes, SourceProductionContext context)
@@ -147,7 +148,7 @@ public class PowerShellGenerator : IIncrementalGenerator
                     $"                {property.PropertyName} = serviceProvider.GetService<{property.PropertyType}>();");
             }
         }
-        
+
         sourceBuilder.AppendLine("            };");
         sourceBuilder.AppendLine("    }");
         sourceBuilder.AppendLine("}");
