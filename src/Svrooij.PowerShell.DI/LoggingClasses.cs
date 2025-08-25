@@ -5,8 +5,7 @@ internal class LoggingClasses
     internal const string Classes = @"
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Mel = Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
@@ -17,39 +16,39 @@ namespace Svrooij.PowerShell.DI.Logging
 {
     #nullable enable
     /// <summary>
-    /// <see cref=""Mel.ILogger""/> that outputs to the PowerShell <see cref=""PSCmdlet""/>
+    /// <see cref=""ILogger""/> that outputs to the PowerShell <see cref=""PSCmdlet""/>
     /// </summary>
-    public class PowerShellLogger : Mel.ILogger
+    public class PowerShellLogger : ILogger
     {
         /// <summary>
         /// Constructor for <see cref=""PowerShellLogger""/>
         /// </summary>
         /// <remarks>Called automatically by the <see cref=""PowerShellLoggerProvider""/></remarks>
-        public PowerShellLogger(string name, Func<PowerShellLoggerConfiguration> getConfig, PSCmdlet cmdlet)
+        public PowerShellLogger(string name, Func<PowerShellLoggerConfiguration> getConfig, PowerShellLoggerContainer container)
         {
             this._name = name;
             this._getConfig = getConfig;
-            this._cmdlet = cmdlet;
-            this._cmdletName = cmdlet.GetType().FullName ?? throw new ArgumentNullException(nameof(cmdlet), ""Cmdlet cannot be null"");
+            this._container = container;
+            this._cmdletName = container.Cmdlet?.GetType().FullName;
         }
 
         private readonly string _name;
-        private readonly string _cmdletName;
+        private string? _cmdletName;
         private readonly Func<PowerShellLoggerConfiguration> _getConfig;
-        private readonly PSCmdlet _cmdlet;
+        private readonly PowerShellLoggerContainer _container;
 
         /// <inheritdoc/>
-        public void Log<TState>(Mel.LogLevel logLevel, Mel.EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             if (IsEnabled(logLevel))
             {
-                _cmdlet?.WriteLog(logLevel, eventId.Id, FormatMessage(state, exception, formatter), exception);
+                _container.Cmdlet?.WriteLog(logLevel, eventId.Id, FormatMessage(state, exception, formatter), exception);
             }
 
         }
 
         /// <inheritdoc/>
-        public bool IsEnabled(Mel.LogLevel logLevel)
+        public bool IsEnabled(LogLevel logLevel)
         {
             var minLevel = _getConfig().GetLogLevel(_name);
             return logLevel >= minLevel;
@@ -61,6 +60,7 @@ namespace Svrooij.PowerShell.DI.Logging
 
         private string FormatMessage<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
+            _cmdletName ??= _container.Cmdlet?.GetType().FullName;
             var config = _getConfig();
             if (config.IncludeCategory && _cmdletName != _name)
             {
@@ -82,16 +82,16 @@ namespace Svrooij.PowerShell.DI.Logging
         /// <summary>
         /// Minimum level of log messages to output
         /// </summary>
-        public Mel.LogLevel DefaultLevel
+        public LogLevel DefaultLevel
         {
-            get => LogLevel.ContainsKey(DefaultLogLevelKey) ? LogLevel[DefaultLogLevelKey] : Mel.LogLevel.Information;
-            set => LogLevel[DefaultLogLevelKey] = value;
+            get => this.LogLevel.ContainsKey(DefaultLogLevelKey) ? this.LogLevel[DefaultLogLevelKey] : Microsoft.Extensions.Logging.LogLevel.Information;
+            set => this.LogLevel[DefaultLogLevelKey] = value;
         }
 
         /// <summary>
         /// Override the minimum level for specific categories (Type Names)
         /// </summary>
-        public Dictionary<string, Mel.LogLevel> LogLevel { get; set; } = new Dictionary<string, Mel.LogLevel>();
+        public Dictionary<string, LogLevel> LogLevel { get; set; } = new Dictionary<string, LogLevel>();
 
         /// <summary>
         /// Specify if the log message should be prefixed with the category name
@@ -103,7 +103,7 @@ namespace Svrooij.PowerShell.DI.Logging
         /// </summary>
         public bool StripNamespace { get; set; } = false;
 
-        internal Mel.LogLevel GetLogLevel(string name)
+        internal LogLevel GetLogLevel(string name)
         {
             if (LogLevel.TryGetValue(name, out var level))
             {
@@ -138,10 +138,10 @@ namespace Svrooij.PowerShell.DI.Logging
     }
 
     /// <summary>
-    /// <see cref=""Mel.ILoggerProvider""/> that outputs to the PowerShell <see cref=""PSCmdlet""/>
+    /// <see cref=""ILoggerProvider""/> that outputs to the PowerShell <see cref=""PSCmdlet""/>
     /// </summary>
-    [Mel.ProviderAlias(""Powershell"")]
-    public sealed class PowerShellLoggerProvider : Mel.ILoggerProvider
+    [ProviderAlias(""Powershell"")]
+    public sealed class PowerShellLoggerProvider : ILoggerProvider
     {
         private readonly IDisposable? _onChangeToken;
         private PowerShellLoggerConfiguration _currentConfig;
@@ -167,16 +167,16 @@ namespace Svrooij.PowerShell.DI.Logging
         }
 
         /// <summary>
-        /// Creates a new <see cref=""Mel.ILogger""/> instance.
+        /// Creates a new <see cref=""ILogger""/> instance.
         /// </summary>
         /// <param name=""categoryName"">Category name to use</param>
-        /// <returns><see cref=""Mel.ILogger""/></returns>
-        public Mel.ILogger CreateLogger(string categoryName)
+        /// <returns><see cref=""ILogger""/></returns>
+        public ILogger CreateLogger(string categoryName)
         {
             // What to do if cmdlet is null?
             return _loggers.AddOrUpdate(
                   categoryName,
-                  name => new PowerShellLogger(name, GetCurrentConfig, _powerShellLoggerContainer?.Cmdlet!),
+                  name => new PowerShellLogger(name, GetCurrentConfig, _powerShellLoggerContainer),
                   (name, logger) => logger
             );
         }
@@ -197,31 +197,31 @@ namespace Svrooij.PowerShell.DI.Logging
         /// Write a log message to the provider PowerShell <see cref=""PSCmdlet""/>
         /// </summary>
         /// <param name=""cmdlet""><see cref=""PSCmdlet""/> that is used for the log message</param>
-        /// <param name=""logLevel""><see cref=""Mel.LogLevel""/> for the message, will be put in from the message</param>
+        /// <param name=""logLevel""><see cref=""LogLevel""/> for the message, will be put in from the message</param>
         /// <param name=""eventId"">The ID for this specific event</param>
         /// <param name=""message"">Log message</param>
         /// <param name=""e"">(optional) <see cref=""Exception""/></param>
-        public static void WriteLog(this PSCmdlet cmdlet, Mel.LogLevel logLevel, int eventId, string message, Exception? e = null)
+        public static void WriteLog(this PSCmdlet cmdlet, LogLevel logLevel, int eventId, string message, Exception? e = null)
         {
             switch (logLevel)
             {
-                case Mel.LogLevel.Trace:
-                    cmdlet.WriteVerbose(message);
+                case LogLevel.Trace:
+                    cmdlet.CommandRuntime.WriteVerbose(message);
                     break;
 
-                case Mel.LogLevel.Debug:
-                    cmdlet.WriteDebug(message);
+                case LogLevel.Debug:
+                    cmdlet.CommandRuntime.WriteDebug(message);
                     break;
 
-                case Mel.LogLevel.Information:
+                case LogLevel.Information:
                     cmdlet.Host.UI.WriteLine($""INFO: {message}"");
                     break;
 
-                case Mel.LogLevel.Warning:
+                case LogLevel.Warning:
                     cmdlet.WriteWarning(message);
                     break;
 
-                case Mel.LogLevel.Error:
+                case LogLevel.Error:
                     cmdlet.WriteError(new ErrorRecord(e ?? new Exception(message), eventId.ToString(), ErrorCategory.InvalidOperation, null));
                     break;
             }
@@ -233,19 +233,24 @@ namespace Svrooij.PowerShell.DI.Logging
         /// <summary>
         /// Adds a PowerShell logger named 'PowerShell' to the logger factory.
         /// </summary>
-        /// <param name=""builder""><see cref=""Mel.ILoggingBuilder""/> that you get when you call serviceCollection.AddLogging(builder =>)</param>
-        /// <returns><see cref=""Mel.ILoggingBuilder""/> to support chaining</returns>
-        public static Mel.ILoggingBuilder AddPowerShellLogging(this Mel.ILoggingBuilder builder)
+        /// <param name=""builder""><see cref=""ILoggingBuilder""/> that you get when you call serviceCollection.AddLogging(builder =>)</param>
+        /// <returns><see cref=""ILoggingBuilder""/> to support chaining</returns>
+        public static ILoggingBuilder AddPowerShellLogging(this ILoggingBuilder builder)
         {
-            builder.AddConfiguration();
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            Microsoft.Extensions.Logging.Configuration.LoggingBuilderConfigurationExtensions.AddConfiguration(builder);
+            //builder.AddConfiguration();
 
             builder.Services.AddSingleton<PowerShellLoggerContainer>();
 
             // Register provider (to use DI for the properties)
-            builder.Services.AddScoped<Mel.ILoggerProvider, PowerShellLoggerProvider>();
+            builder.Services.AddScoped<ILoggerProvider, PowerShellLoggerProvider>();
 
             // Register the logger options
-            LoggerProviderOptions.RegisterProviderOptions
+            Microsoft.Extensions.Logging.Configuration.LoggerProviderOptions.RegisterProviderOptions
                 <PowerShellLoggerConfiguration, PowerShellLoggerProvider>(builder.Services);
             return builder;
         }
@@ -269,6 +274,9 @@ namespace Svrooij.PowerShell.DI.Logging
 
             services.AddLogging(builder =>
             {
+                // Trick to call extension method on ILoggingBuilder because of strange behavior when importing the namespace without alias
+                //Microsoft.Extensions.Logging.LoggingBuilderExtensions.SetMinimunLevel(builder, Microsoft.Extensions.Logging.LogLevel.Debug);
+                builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Debug);
                 builder.AddPowerShellLogging();
                 if (configure != null)
                 {

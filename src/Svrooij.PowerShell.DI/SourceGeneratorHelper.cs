@@ -2,7 +2,7 @@
 
 internal class SourceGenerationHelper
 {
-internal const string Attributes = @"using System;
+    internal const string Attributes = @"using System;
 namespace Svrooij.PowerShell.DI
 {
     /// <summary>
@@ -28,7 +28,7 @@ namespace Svrooij.PowerShell.DI
     }
 }";
 
-internal const string Classes = @"
+    internal const string Classes = @"
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
