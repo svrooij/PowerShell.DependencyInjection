@@ -6,16 +6,25 @@ using Svrooij.PowerShell.DI;
 
 namespace Svrooij.PowerShell.DependencyInjection.Sample;
 
+/// <summary>
+/// Base cmdlet class for dependency injection sample, using the Startup class for service configuration.
+/// </summary>
 public class DepCmdlet : DependencyCmdlet<Startup>
 {
 
 }
 
+/// <summary>
+/// Cmdlet for testing sample dependency injection and logging in PowerShell, using a custom base class.
+/// </summary>
 [Cmdlet(VerbsDiagnostic.Test, "SampleCmdletWithBase")]
 [OutputType(typeof(FavoriteStuff))]
 [GenerateBindings]
 public partial class TestSampleCmdletWithBaseCommand : DepCmdlet
 {
+    /// <summary>
+    /// Gets or sets the user's favorite number. This value is required and can be provided via the pipeline.
+    /// </summary>
     [Parameter(
         Mandatory = true,
         Position = 0,
@@ -23,6 +32,9 @@ public partial class TestSampleCmdletWithBaseCommand : DepCmdlet
         ValueFromPipelineByPropertyName = true)]
     public int FavoriteNumber { get; set; }
 
+    /// <summary>
+    /// Gets or sets the user's favorite pet. Valid values are "Cat", "Dog", or "Horse". Defaults to "Dog".
+    /// </summary>
     [Parameter(
         Position = 1,
         ValueFromPipelineByPropertyName = true)]
@@ -40,7 +52,11 @@ public partial class TestSampleCmdletWithBaseCommand : DepCmdlet
     [ServiceDependency(Required = true)]
     private Microsoft.Extensions.Logging.ILogger<TestSampleCmdletWithBaseCommand> _logger;
 
-    // This method will be called automatically by DependencyCmdlet which is called by ProcessRecord()
+    /// <summary>
+    /// Processes each record received from the pipeline. Logs information and calls the test service.
+    /// </summary>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public override async Task ProcessRecordAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting ProcessRecordAsync()");

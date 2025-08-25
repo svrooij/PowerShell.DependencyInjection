@@ -132,6 +132,9 @@ namespace Svrooij.PowerShell.DI.Logging
         }
     }
 
+    /// <summary>
+    /// Container for the <see cref=""PSCmdlet""/> that is used by the <see cref=""PowerShellLoggerProvider""/>
+    /// </summary>
     public sealed class PowerShellLoggerContainer
     {
         internal PSCmdlet? Cmdlet { get; set; }
@@ -154,6 +157,7 @@ namespace Svrooij.PowerShell.DI.Logging
         /// Creates a new instance of <see cref=""PowerShellLoggerProvider""/>
         /// </summary>
         /// <param name=""config"">Auto loaded configuration</param>
+        /// <param name=""powerShellLoggerContainer"">Container for the <see cref=""PSCmdlet""/></param>
         public PowerShellLoggerProvider(IOptionsMonitor<PowerShellLoggerConfiguration> config, PowerShellLoggerContainer powerShellLoggerContainer)
         {
             _currentConfig = config.CurrentValue;
