@@ -44,7 +44,7 @@ public partial class TestSampleCmdletWithBaseCommand : DepCmdlet
     // Give your dependencies the ServiceDependency attribute
     // Only private/internal properties and fields with this attribute will be resolved
     // public properties and fields will be ignored because they might also be exposed to powershell.
-    [ServiceDependency]
+    [ServiceDependency(Required = true)]
     private Svrooij.PowerShell.DependencyInjection.Sample.ITestService _testService;
 
     // Logging using Microsoft.Extensions.Logging is supported (and configured automatically)
@@ -62,6 +62,7 @@ public partial class TestSampleCmdletWithBaseCommand : DepCmdlet
         _logger.LogInformation("Starting ProcessRecordAsync()");
 
         // In the startup class we configured the logging level for this namespace to Debug
+        // Debug messages are only logged when the cmdlet is run with -Debug
         _logger.LogDebug("FavoriteNumber: {FavoriteNumber}, FavoritePet: {favoritePet}", FavoriteNumber, FavoritePet);
 
         //_logger.LogWarning("This is a warning");

@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace Svrooij.PowerShell.DI.Generator;
 
 [Generator]
-public class PowerShellGenerator : IIncrementalGenerator
+public sealed class PowerShellGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
