@@ -42,7 +42,14 @@ namespace Svrooij.PowerShell.DI.Logging
         {
             if (IsEnabled(logLevel))
             {
-                _container.Cmdlet?.WriteLog(logLevel, eventId.Id, FormatMessage(state, exception, formatter), exception);
+                try {
+                    _container.Cmdlet?.WriteLog(logLevel, eventId.Id, FormatMessage(state, exception, formatter), exception);
+                }
+                catch (Exception ex)
+                {
+                    // Logging should never mess up the cmdlet
+                    Console.WriteLine($""[ERROR] Write log to PowerShell failed: {ex.Message}"");
+                }
             }
 
         }

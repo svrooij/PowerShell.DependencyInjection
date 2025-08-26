@@ -105,8 +105,8 @@ namespace Svrooij.PowerShell.DI
         /// </summary>
         protected DependencyCmdlet()
         {
-            var startupType = typeof(TStartup);
-            _serviceProvider = ServiceProviderCache.ProviderCache.GetOrAdd(startupType, _ =>
+            var cmdType = this.GetType();
+            _serviceProvider = ServiceProviderCache.ProviderCache.GetOrAdd(cmdType, _ =>
             {
                 var startup = new TStartup();
                 var services = new ServiceCollection();

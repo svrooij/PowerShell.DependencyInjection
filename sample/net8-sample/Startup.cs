@@ -23,8 +23,7 @@ public class Startup : PsStartup
         return builder =>
         {
             builder.DefaultLevel = LogLevel.Information;
-            builder.LogLevel["Svrooij.PowerShell.DependencyInjection.Sample.TestSampleCmdletCommand"] = LogLevel.Debug;
-            // builder.LogLevel["Svrooij.PowerShell.DependencyInjection.Sample.TestService"] = LogLevel.Information;
+            builder.LogLevel["Svrooij.PowerShell.DependencyInjection.Sample"] = LogLevel.Debug;
             builder.IncludeCategory = true;
             builder.StripNamespace = true;
         };
