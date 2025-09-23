@@ -4,20 +4,21 @@
     <TargetFramework>netstandard2.0</TargetFramework> 
     <!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
-	  <!-- 👇 IncludeBuildOutput triggers a NU5128 warning -->
-	  <NoWarn>NU5128</NoWarn>
-	  <!-- 👇 New project, why not! -->
+    <!-- 👇 IncludeBuildOutput triggers a NU5128 warning -->
+    <NoWarn>NU5128</NoWarn>
+    <!-- 👇 New project, why not! -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>Latest</LangVersion>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
     <!-- This part is for the source generator -->
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsRoslynComponent>true</IsRoslynComponent>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
     <!-- This part is for the source generator -->
-      
+
     <!-- This part is for the package -->
     <Authors>Stephan van Rooij</Authors>
     <Copyright>Copyright (c) 2024 Stephan van Rooij</Copyright>
@@ -38,14 +39,24 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
   </ItemGroup>
 
-    <!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
+  <!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
+  <!-- This includes the README and LICENSE files in the package -->
   <ItemGroup>
 	  <None Include="..\..\README.md" Pack="true" PackagePath="\README.md" />
 	  <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\LICENSE.txt" />
   </ItemGroup>
-  
+
+  <!-- This is to embed all files in Code folder, instead of compiling them -->
+  <ItemGroup>
+    <!-- Dont compile the files in this folder -->
+    <Compile Remove="Code\**\*.cs" />
+    <!-- Instead, embed them as resources, with the same name as the file is called in the Code folder (no namespace) -->
+    <EmbeddedResource Include="Code\**\*.cs">
+      <LogicalName>%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

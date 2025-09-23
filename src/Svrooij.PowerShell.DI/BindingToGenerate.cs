@@ -7,7 +7,6 @@ internal readonly record struct BindingToGenerate(string BaseClass, string Class
     public string BaseClass { get; } = BaseClass;
     public string ClassName { get; } = ClassName;
     public string Namespace { get; } = Namespace;
-
     public ImmutableArray<BindingPropertyToGenerate> Properties { get; } = Properties;
 }
 
