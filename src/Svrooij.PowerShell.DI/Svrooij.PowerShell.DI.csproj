@@ -5,7 +5,8 @@
     <!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <!-- 👇 IncludeBuildOutput triggers a NU5128 warning -->
-    <NoWarn>NU5128</NoWarn>
+    <!-- 👇 RS2008 because we are not yet keeping a list of released analyzers -->
+    <NoWarn>NU5128;RS2008</NoWarn>
     <!-- 👇 New project, why not! -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
